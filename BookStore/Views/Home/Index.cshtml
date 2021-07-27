@@ -1,0 +1,72 @@
+﻿@model IEnumerable<Book>
+
+@{
+    ViewBag.Title = "Home Page";
+    List <Wishlist_AJAX> CustomerWishlist = (List<Wishlist_AJAX>) ViewData["CustomerWishlist"];
+}
+
+@section Scripts
+{
+    <script src="~/js/search.js"></script>
+    <script src="~/js/wishlist.js"></script>
+}
+
+<link rel="stylesheet" href="~/css/autocomplete.css" type="text/css">
+
+<div>
+    <nav class="navbar navbar-expand-sm bg-light navbar-light">
+        <form method="GET" id="search_form" action="/search" autocomplete="off">
+            <div class="input-group autocomplete">
+                <input type="search" id="search_query" name="query" placeholder="Enter your search here..." class="form-control" />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </nav>
+</div>
+
+<div class="card-deck justify-content-center">
+    @foreach (var book in Model)
+    {
+        //var photoPath = "~/images/" + (book.Image ?? "2.png");
+
+        <div class="card m-3" style="min-width:18rem; max-width: 22rem;">
+            <div class="card-header">
+                <h4>@book.Name</h4>
+            </div>
+
+            <div class="card-body">
+                <img class="card-img-top" src=@book.Image
+                     asp-append-version="true" />
+                <p>
+                    Description: @book.Desc
+                </p>
+                <p>
+                    <strong>Price: </strong>$@book.UnitPrice
+                </p>
+            </div>
+
+            <div class="card-footer text-center">
+                <a class="btn btn-success m-1" href="~/Cart/AddCart?Id=@book.Id">Add to cart</a>
+                <br />
+                @if (ViewData["username"] != null)
+                {
+                    string searchID = book.Id.ToString();
+                    Wishlist_AJAX ItemWishlistStatus = CustomerWishlist.Find(x => x.wishlistID == searchID);
+
+                    if (ItemWishlistStatus == null)
+                    {
+                        <input type="button" value="Add to Wishlist" class="btn btn-outline-info btn-sm wishlist_buttons" wishlistID="@book.Id" onclick="onClickWishlist()">
+                    }
+
+                    else
+                    {
+                        <input type="button" value="Remove from Wishlist" class="btn btn-secondary btn-sm wishlist_buttons" wishlistID="@book.Id" onclick="onClickWishlist()">
+                    }
+
+                }
+            </div>
+        </div>
+     }
+</div>

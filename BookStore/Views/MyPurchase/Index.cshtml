@@ -1,0 +1,85 @@
+﻿@using BookStore.Controllers
+
+@{
+    Layout = "_LoggedInLayout";
+    ViewData["Title"] = "ViewCart";
+    List<CartItem> hispdts = (List<CartItem>)ViewData["hispdt"];
+}
+<br />
+
+<h1>My Purchase</h1>
+
+<br />
+
+<!--Section: Block Content-->
+<section>
+
+    <!--Grid row-->
+<div class="row">
+
+    <!--Grid column-->
+    <div class="col-lg-8">
+
+        <!-- Card -->
+        <div class="mb-3">
+            <div class="pt-4">
+
+                @foreach (CartItem pdt in hispdts)
+                {
+                    <div class="row mb-4">
+                        <div class="col-md-5 col-lg-3 col-xl-3">
+                            <div class="rounded mb-3 mb-md-0">
+                                <img class="img-fluid w-100"
+                                     src=@pdt.Book.Image alt="Sample">
+                            </div>
+                        </div>
+
+                        <div class="col-md-7 col-lg-9 col-xl-9">
+                            <div>
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <h5> @pdt.Book.Name</h5>
+                                        <p class="mb-2 text-muted text-uppercase small">@pdt.Book.Desc</p>
+                                    </div>
+                                    <div class="col-md-7 col-lg-9 col-xl-9">
+                                        <h5> Purchase On : @pdt.CheckoutTime</h5>
+                                        <h5> Quantity : @pdt.Quantity</h5>
+                                        <h5>
+                                            Activation Code:
+                                            @if (pdt.Quantity == 1)
+                                            {
+                                                @foreach (PurcahsedActivationCode pdtact in pdt.ActivationCodes)
+                                                {
+                                                    <span>@pdtact.ActivationCode</span>
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                <select name="acts">
+                                                    @foreach (PurcahsedActivationCode pdtact in pdt.ActivationCodes)
+                                                    {
+                                                        <option value="@(pdtact.ActivationCode)">@pdtact.ActivationCode</option>
+                                                    }
+                                                </select>
+                                            }
+                                        </h5>
+                                           
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+            </div>
+        </div>
+
+
+    </div>
+    <!--Grid column-->
+    <!--Grid column-->
+</div>
+</section>

@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    string query = (string)ViewData["query"];
+    List<Wishlist_AJAX> CustomerWishlist = (List<Wishlist_AJAX>)ViewData["CustomerWishlist"];
+}
+
+@section Scripts
+{
+    <script src="~/js/search.js"></script>
+    <script src="~/js/wishlist.js"></script>
+}
+
+<link rel="stylesheet" href="~/css/autocomplete.css" type="text/css">
+
+<div>
+    <nav class="navbar navbar-expand-sm bg-light navbar-light">
+        <form method="GET" id="search_form" action="/search" autocomplete="off">
+            <div class="input-group autocomplete">
+                <input type="search" id="search_query" name="query" placeholder="Enter your search here..." class="form-control" />
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </nav>
+</div>
+
+@{
+    List<Book> searchResultsID = new List<Book>();
+
+    foreach (var product in Model)
+    {
+        string[] tagArray = product.Tags.Split('|');
+
+        foreach (string tag in tagArray)
+        {
+            string searchTag = tag.Trim();
+
+            if (query.Contains(searchTag))
+            {
+                if (!searchResultsID.Contains(product))
+                {
+                    searchResultsID.Add(product);
+                }
+            }
+        }
+    }
+}
+
+<br>
+<p><b>Results for: "@query"</b></p>
+<p> @searchResultsID.Count result(s) found.</p>
+
+@{
+    if (searchResultsID.Count > 0)
+    {
+        <div class="card-deck">
+            @foreach (var item in searchResultsID)
+            {
+            <div class="card m-3" style="min-width:18rem; max-width: 22rem;">
+                <div class="card-header">
+                    <h4>@item.Name</h4>
+                </div>
+
+                <div class="card-body">
+                    <img class="card-img-top imagThumbnail" src=@item.Image
+                         asp-append-version="true" />
+                    <p>Description : @item.Desc</p>
+                    <p><strong>Price: </strong>$@item.UnitPrice</p>
+                </div>
+
+                <div class="card-footer text-center">
+                    <a class="btn btn-success m-1" href="~/Cart/AddCart?Id=@item.Id">Add to cart</a>
+                    <br />
+                    @if (ViewData["username"] != null)
+                    {
+                        string searchID = item.Id.ToString();
+                        Wishlist_AJAX ItemWishlistStatus = CustomerWishlist.Find(x => x.wishlistID == searchID);
+
+                        if (ItemWishlistStatus == null)
+                        {
+                            <input type="button" value="Add to Wishlist" class="btn btn-outline-info btn-sm wishlist_buttons" wishlistID="@item.Id" onclick="onClickWishlist()">
+                        }
+
+                        else
+                        {
+                            <input type="button" value="Remove from Wishlist" class="btn btn-secondary btn-sm wishlist_buttons" wishlistID="@item.Id" onclick="onClickWishlist()">
+                        }
+
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    }
+
+    else
+    {
+        <p style="text-align:center"><b>We could not find anything that matches your search</b></p>
+        <p style="text-align:center">Try searching other keywords, or click the link below to check out our products!</p>
+        <center><a href="/home/index">Catalogue</a></center>
+    }
+}

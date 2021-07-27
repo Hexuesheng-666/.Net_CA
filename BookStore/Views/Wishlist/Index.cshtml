@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    List<Wishlist_AJAX> DisplayWishlistItems = (List<Wishlist_AJAX>)ViewData["DisplayWishlistItems"];
+    string username = (string)ViewData["username"];
+}
+
+<br>
+
+<h1>@username's wishlist</h1>
+<br>
+
+@{
+    <div class="row mx-auto">
+        @foreach (Wishlist_AJAX WishlistItem in DisplayWishlistItems)
+        {
+        <div class="col-sm-8 mx-auto">
+            <img src=@WishlistItem.item.Image class="imagThumbnail">
+            <br>
+            <p><b>@WishlistItem.item.Name </b></p>
+            <p>@WishlistItem.item.Desc</p>
+        </div>
+
+            <div class="col-sm-4 justify-content-center mx-auto">
+                <a class="btn btn-success m-1 mx-auto" href="~/Cart/AddCart?Id=@WishlistItem.item.Id">Add to cart</a>
+            </div>
+        }
+    </div>
+}
